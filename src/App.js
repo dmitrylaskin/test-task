@@ -1,25 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import './App.css'
+import {connect} from "react-redux";
+import {productsRequest, setId, setUnit, setUnitAlt} from "./Redux/products-reducer";
+import ProductItem from "./Components/ProductItem";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+
+class App extends React.Component {
+
+    componentDidMount() {
+        this.props.productsRequest()
+    }
+
+    render() {
+        if (!this.props.products.length) {
+            return <div>Loading...</div>
+        }
+
+
+        return this.props.products.map(item => <ProductItem key={item.productId}
+                                                            title={item.title}
+                                                            code={item.code}
+                                                            priceRetail={item.priceRetail}
+                                                            priceRetailAlt={item.priceRetailAlt}
+                                                            priceGold={item.priceGold}
+                                                            priceGoldAlt={item.priceGoldAlt}
+                                                            productId={item.productId}
+                                                            unit={this.props.unit}
+                                                            setUnit={this.props.setUnit}
+                                                            setUnitAlt={this.props.setUnitAlt}
+                                                            id={this.props.id}
+                                                            setId={this.props.setId}
+                                                            assocProducts={item.assocProducts}
+        />);
+    }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+    return {
+        products: state.productsData.products,
+        unit: state.productsData.unit,
+        id: state.productsData.id,
+    }
+}
+
+
+export default connect(mapStateToProps, {productsRequest, setUnit, setUnitAlt, setId})(App);
